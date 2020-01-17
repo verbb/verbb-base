@@ -1,0 +1,28 @@
+{
+    "name": "verbb/base",
+    "description": "Common utilities and building-blocks for Verbb plugins for Craft CMS.",
+    "type": "yii-module",
+    "version": "1.0.0",
+    "support": {
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/verbb-base/issues?state=open",
+        "source": "https://github.com/verbb/verbb-base",
+        "docs": "https://github.com/verbb/verbb-base",
+        "rss": "https://github.com/verbb/verbb-base/commits/v2.atom"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "https://verbb.io"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.4.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "verbb\\base\\": "src/"
+        }
+    }
+}
