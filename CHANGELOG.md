@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 - 2020-04-15
+
+### Added
+- Add file logging helper.
+
 ## 1.0.1 - 2020-01-25
 
 ### Changed
