@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2021-03-18
+
+### Fixed
+- Fix file logging initializing too early before Craft has been bootstrapped.
+
 ## 1.0.2 - 2020-04-15
 
 ### Added
