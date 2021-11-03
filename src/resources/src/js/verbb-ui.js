@@ -13,135 +13,208 @@ if (typeof Verbb === typeof undefined) {
 
 Verbb.UI = Garnish.Base.extend({
     init: function() {
-        var $tabsContainer = $('[data-vui-tabs]');
+        this.$tabsContainer = $('[data-vui-tabs]');
 
-        if ($tabsContainer) {
-            new Verbb.UI.SimpleTabs($tabsContainer);
+        if (this.$tabsContainer.length) {
+            new Verbb.UI.SimpleTabs(this.$tabsContainer);
         }
     },
 });
 
 Verbb.UI.SimpleTabs = Garnish.Base.extend({
-    init: function($tabsContainer) {
-        // Clear out all our old info in case the tabs were just replaced
-        this.$tabsList = this.$tabs = this.$selectedTab = this.selectedTabIndex = null;
+    $container: null,
+    $ul: null,
+    $tabs: null,
+    $selectedTab: null,
+    $focusableTab: null,
 
-        this.$tabsContainer = $tabsContainer;
+    init: function(container) {
+        this.$container = $(container);
+        this.$ul = this.$container.find('> ul:first');
+        this.$tabs = this.$ul.find('> li > a');
+        this.$selectedTab = this.$tabs.filter('.sel:first');
+        this.$focusableTab = this.$tabs.filter('[tabindex=0]:first');
 
-        if (!this.$tabsContainer.length) {
-            this.$tabsContainer = null;
-            return;
+        // Is there already a tab manager?
+        if (this.$container.data('tabs')) {
+            Garnish.log('Double-instantiating a tab manager on an element');
+            this.$container.data('tabs').destroy();
         }
 
-        this.$tabsList = this.$tabsContainer.find('> ul');
-        this.$tabs = this.$tabsList.find('> li');
+        this.$container.data('tabs', this);
 
-        var i, $tab, $a, href;
-
-        for (i = 0; i < this.$tabs.length; i++) {
-            $tab = this.$tabs.eq(i);
+        for (let i = 0; i < this.$tabs.length; i++) {
+            const $a = this.$tabs.eq(i);
 
             // Does it link to an anchor?
-            $a = $tab.children('a');
-            href = $a.attr('href');
-
+            const href = $a.attr('href');
             if (href && href.charAt(0) === '#') {
-                this.addListener($a, 'click', function(ev) {
+                this.addListener($a, 'keydown', ev => {
+                    if ([Garnish.SPACE_KEY, Garnish.RETURN_KEY].includes(ev.keyCode)) {
+                        ev.preventDefault();
+                        this.selectTab(ev.currentTarget);
+                    }
+                });
+                this.addListener($a, 'click', ev => {
                     ev.preventDefault();
+                    const $a = $(ev.currentTarget);
                     this.selectTab(ev.currentTarget);
+                    this.makeTabFocusable(ev.currentTarget);
                 });
 
-                if (encodeURIComponent(href.substr(1)) === document.location.hash.substr(1)) {
-                    this.selectTab($a);
+                if (href.substr(1) === window.LOCATION_HASH) {
+                    $initialTab = $a;
                 }
             }
 
-            if (!this.$selectedTab && $a.hasClass('sel')) {
-                this._selectTab($a, i);
+            this.addListener($a, 'keydown', ev => {
+                if ([Garnish.DOWN_KEY, Garnish.UP_KEY].includes(ev.keyCode) && $.contains(this.$ul[0], ev.currentTarget)) {
+                    let $tab;
+
+                    if (ev.keyCode === Garnish.UP_KEY) {
+                        var $prevTab = $(ev.currentTarget).parent().prev('li');
+
+                        if ($prevTab.hasClass('heading')) {
+                            $prevTab = $prevTab.prev('li');
+                        }
+
+                        $tab = $prevTab.children('a');
+                    } else {
+                        var $nextTab = $(ev.currentTarget).parent().next('li');
+
+                        if ($nextTab.hasClass('heading')) {
+                            $nextTab = $nextTab.next('li');
+                        }
+
+                        $tab = $nextTab.children('a');
+                    }
+
+                    if ($tab.length) {
+                        ev.preventDefault();
+                        this.makeTabFocusable($tab);
+                        $tab.focus();
+                        this.scrollToTab($tab);
+                    }
+                }
+            });
+        }
+
+        if (window.LOCATION_HASH) {
+            const $tab = this.$tabs.filter(`[href="#${window.LOCATION_HASH}"]`);
+            
+            if ($tab.length) {
+                this.selectTab($tab);
             }
         }
     },
 
     selectTab: function(tab) {
-        var $tab = $(tab);
+        const $tab = this._getTab(tab);
 
-        if (this.$selectedTab) {
-            if (this.$selectedTab.get(0) === $tab.get(0)) {
-                return;
-            }
-
-            this.deselectTab();
+        if ($tab[0] === this.$selectedTab[0]) {
+            return;
         }
 
-        $tab.addClass('sel');
+        this.deselectTab();
+        this.$selectedTab = $tab.addClass('sel');
+        this.makeTabFocusable($tab);
+        this.scrollToTab($tab);
 
-        var href = $tab.attr('href')
-        $(href).removeClass('hidden');
+        this.trigger('selectTab', {
+            $tab: $tab,
+        });
 
-        if (typeof history !== 'undefined') {
-            history.replaceState(undefined, undefined, href);
+        const href = $tab.attr('href');
+
+        // Show its content area
+        if (href.charAt(0) === '#') {
+            $(href).removeClass('hidden');
         }
 
-        this._selectTab($tab, this.$tabs.index($tab.parent()));
-        this.updateTabs();
+        // Trigger a resize event to update any UI components that are listening for it
+        Garnish.$win.trigger('resize');
 
         // Fixes Redactor fixed toolbars on previously hidden panes
         Garnish.$doc.trigger('scroll');
-    },
 
-    _selectTab: function($tab, index) {
-        this.$selectedTab = $tab;
-        this.selectedTabIndex = index;
+        if (typeof history !== 'undefined') {
+            // Delay changing the hash so it doesn't cause the browser to jump on page load
+            Garnish.requestAnimationFrame(() => {
+                history.replaceState(undefined, undefined, href);
+            });
+        }
     },
 
     deselectTab: function() {
-        if (!this.$selectedTab) {
+        const $tab = this.$selectedTab.removeClass('sel');
+        this.$selectedTab = null;
+
+        this.trigger('deselectTab', {
+            $tab: $tab,
+        });
+
+        if ($tab.attr('href').charAt(0) === '#') {
+            // Hide its content area
+            $($tab.attr('href')).addClass('hidden');
+        }
+    },
+
+    makeTabFocusable: function(tab) {
+        const $tab = this._getTab(tab);
+
+        if ($tab[0] === this.$focusableTab[0]) {
             return;
         }
 
-        this.$selectedTab.removeClass('sel');
-
-        if (this.$selectedTab.attr('href').charAt(0) === '#') {
-            $(this.$selectedTab.attr('href')).addClass('hidden');
-        }
-
-        this._selectTab(null, null);
+        this.$focusableTab.attr('tabindex', '-1');
+        this.$focusableTab = $tab.attr('tabindex', '0');
     },
 
-    handleWindowResize: function() {
-        this.updateTabs();
+    scrollToTab: function(tab) {
+        const $tab = this._getTab(tab);
+        const scrollLeft = this.$ul.scrollLeft();
+        const tabOffset = $tab.offset().left;
+        const elemScrollOffset = tabOffset - this.$ul.offset().left;
+        let targetScrollLeft = false;
+
+        // Is the tab hidden on the left?
+        if (elemScrollOffset < 0) {
+            targetScrollLeft = scrollLeft + elemScrollOffset - 24;
+        } else {
+            const tabWidth = $tab.outerWidth();
+            const ulWidth = this.$ul.prop('clientWidth');
+
+            // Is it hidden to the right?
+            if (elemScrollOffset + tabWidth > ulWidth) {
+                targetScrollLeft = scrollLeft + (elemScrollOffset - (ulWidth - tabWidth)) + 24;
+            }
+        }
+
+        if (targetScrollLeft !== false) {
+            this.$ul.scrollLeft(targetScrollLeft);
+        }
     },
 
-    updateTabs: function() {
-        if (!this.$tabsContainer) {
-            return;
+    _getTab: function(tab) {
+        if (tab instanceof jQuery) {
+            return tab;
         }
 
-        var maxWidth = Math.floor(this.$tabsContainer.width()) - 40;
-        var totalWidth = 0;
-        var tabMargin = Garnish.$bod.width() >= 768 ? -12 : -7;
-        var $tab;
-
-        // Start with the selected tab, because that needs to be visible
-        if (this.$selectedTab) {
-            this.$selectedTab.parent('li').appendTo(this.$tabsList);
-            totalWidth = Math.ceil(this.$selectedTab.parent('li').width());
+        if (tab instanceof HTMLElement) {
+            return $(tab);
         }
 
-        for (var i = 0; i < this.$tabs.length; i++) {
-            $tab = this.$tabs.eq(i).appendTo(this.$tabsList);
-            if (i !== this.selectedTabIndex) {
-                totalWidth += Math.ceil($tab.width());
-                // account for the negative margin
-                if (i !== 0 || this.$selectedTab) {
-                    totalWidth += tabMargin;
-                }
-            }
-
-            if (i === this.selectedTabIndex || totalWidth <= maxWidth) {
-                $tab.find('> a').removeAttr('role');
-            }
+        if (typeof tab !== 'string') {
+            throw 'Invalid tab ID';
         }
+
+        const $tab = this.$tabs.filter(`[data-id="${tab}"]`);
+
+        if (!$tab.length) {
+            throw `Invalid tab ID: ${tab}`;
+        }
+
+        return $tab;
     },
 });
 
