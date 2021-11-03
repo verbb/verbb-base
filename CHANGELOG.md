@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4 - 2021-11-03
+
+### Fixed
+- Fix sidebar tabs not working in some instances, and make fully accessible.
+
 ## 1.0.3 - 2021-03-18
 
 ### Fixed
