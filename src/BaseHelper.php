@@ -10,7 +10,7 @@ abstract class BaseHelper
     // Public Methods
     // =========================================================================
 
-    public static function registerModule()
+    public static function registerModule(): void
     {
         $moduleId = 'verbb-base';
 
@@ -21,7 +21,7 @@ abstract class BaseHelper
         }
     }
 
-    public static function setFileLogging($pluginHandle)
+    public static function setFileLogging($pluginHandle): void
     {
         // Prevent code from firing too early before Craft is bootstrapped
         Craft::$app->on(Application::EVENT_INIT, function() use ($pluginHandle) {

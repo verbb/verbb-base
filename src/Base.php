@@ -8,7 +8,7 @@ class Base extends Module
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         parent::init();
     }

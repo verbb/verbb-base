@@ -16,7 +16,7 @@ class Module extends YiiModule
     // =========================================================================
 
     public $t9nCategory;
-    public $sourceLanguage = 'en-AU';
+    public string $sourceLanguage = 'en-AU';
 
 
     // Public Methods

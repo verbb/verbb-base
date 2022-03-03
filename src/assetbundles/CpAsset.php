@@ -9,7 +9,7 @@ class CpAsset extends AssetBundle
     // Public Methods
     // =========================================================================
 
-    public function init()
+    public function init(): void
     {
         $this->sourcePath = '@verbb/base/resources/dist';
 
