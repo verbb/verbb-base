@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.0-beta.1 - 2022-03-10
+
+### Changed
+- Craft 4 upgrade.
+
 ## 1.0.4 - 2021-11-03
 
 ### Fixed
