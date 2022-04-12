@@ -64,6 +64,7 @@
     margin-right: -1px;
     transform: skewX(-25deg);
     transition: all 0.3s ease;
+    box-sizing: content-box;
 }
 
 .plugin-credit .credit-wrap {
