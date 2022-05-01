@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.0-beta.3 - 2022-05-01
+
+### Changed
+- Switch to Monolog for logging.
+
+### Fixed
+- Fix credits css.
+
 ## 2.0.0-beta.2 - 2022-03-10
 
 ### Changed
