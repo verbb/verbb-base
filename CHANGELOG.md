@@ -1,22 +1,13 @@
 # Changelog
 
-## 2.0.0-beta.3 - 2022-05-01
+## 2.0.0 - 2022-05-05
 
 ### Changed
 - Switch to Monolog for logging.
+- Craft 4 upgrade.
 
 ### Fixed
 - Fix credits css.
-
-## 2.0.0-beta.2 - 2022-03-10
-
-### Changed
-- Craft 4 upgrade.
-
-## 2.0.0-beta.1 - 2022-03-10
-
-### Changed
-- Craft 4 upgrade.
 
 ## 1.0.4 - 2021-11-03
 
