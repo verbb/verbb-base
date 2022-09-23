@@ -25,18 +25,20 @@ abstract class BaseHelper
 
     public static function setFileLogging($pluginHandle): void
     {
-        Craft::getLogger()->dispatcher->targets[] = new MonologTarget([
-            'name' => $pluginHandle,
-            'categories' => [$pluginHandle],
-            'level' => LogLevel::INFO,
-            'allowLineBreaks' => true,
-            'maxFiles' => 10,
-            'logVars' => ['_GET', '_POST'],
-            'formatter' => new LineFormatter(
-                format: "%datetime% [%level_name%] %message%\n",
-                dateFormat: 'Y-m-d H:i:s',
-                allowInlineLineBreaks: true,
-            ),
-        ]);
+        if (Craft::getLogger()->dispatcher) {
+            Craft::getLogger()->dispatcher->targets[] = new MonologTarget([
+                'name' => $pluginHandle,
+                'categories' => [$pluginHandle],
+                'level' => LogLevel::INFO,
+                'allowLineBreaks' => true,
+                'maxFiles' => 10,
+                'logVars' => ['_GET', '_POST'],
+                'formatter' => new LineFormatter(
+                    format: "%datetime% [%level_name%] %message%\n",
+                    dateFormat: 'Y-m-d H:i:s',
+                    allowInlineLineBreaks: true,
+                ),
+            ]);
+        }
     }
 }
