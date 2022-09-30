@@ -25,8 +25,10 @@ abstract class BaseHelper
 
     public static function setFileLogging($pluginHandle): void
     {
-        if (Craft::getLogger()->dispatcher) {
-            Craft::getLogger()->dispatcher->targets[] = new MonologTarget([
+        // Check that dispatcher exists, to avoid error when testing, since this is a bootstrapped module.
+        // https://github.com/verbb/verbb-base/pull/1/files
+        if ($dispatcher = Craft::getLogger()->dispatcher) {
+            $dispatcher->targets[] = new MonologTarget([
                 'name' => $pluginHandle,
                 'categories' => [$pluginHandle],
                 'level' => LogLevel::INFO,
