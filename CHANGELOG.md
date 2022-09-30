@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 - 2022-09-30
+
+### Fixed
+- Fix an error by checking if a dispatcher actually exists before setting its targets. (thanks @boboldehampsink).
+
 ## 2.0.0 - 2022-05-05
 
 ### Changed
