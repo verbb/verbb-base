@@ -13,11 +13,9 @@ if (typeof Verbb === typeof undefined) {
 
 Verbb.UI = Garnish.Base.extend({
     init: function() {
-        this.$tabsContainer = $('[data-vui-tabs]');
-
-        if (this.$tabsContainer.length) {
-            new Verbb.UI.SimpleTabs(this.$tabsContainer);
-        }
+        $('[data-vui-tabs]').each(function(index, element) {
+            new Verbb.UI.SimpleTabs($(element));
+        });
     },
 });
 
@@ -48,6 +46,7 @@ Verbb.UI.SimpleTabs = Garnish.Base.extend({
 
             // Does it link to an anchor?
             const href = $a.attr('href');
+
             if (href && href.charAt(0) === '#') {
                 this.addListener($a, 'keydown', ev => {
                     if ([Garnish.SPACE_KEY, Garnish.RETURN_KEY].includes(ev.keyCode)) {
@@ -127,7 +126,7 @@ Verbb.UI.SimpleTabs = Garnish.Base.extend({
         const href = $tab.attr('href');
 
         // Show its content area
-        if (href.charAt(0) === '#') {
+        if (href && href.charAt(0) === '#') {
             $(href).removeClass('hidden');
         }
 
@@ -153,7 +152,7 @@ Verbb.UI.SimpleTabs = Garnish.Base.extend({
             $tab: $tab,
         });
 
-        if ($tab.attr('href').charAt(0) === '#') {
+        if ($tab.length && $tab.attr('href').charAt(0) === '#') {
             // Hide its content area
             $($tab.attr('href')).addClass('hidden');
         }
