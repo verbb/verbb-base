@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.2 - 2023-05-10
+
+### Added
+- Add `vuiGetValue()` as a Twig function for `ArrayHelper::getValue()`.
+
+### Fixed
+- Fix tabs support.
+
 ## 2.0.1 - 2022-09-30
 
 ### Fixed
