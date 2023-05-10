@@ -44,9 +44,9 @@ class Module extends YiiModule
         }
 
         // Base template directory
-        Event::on(View::class, View::EVENT_REGISTER_CP_TEMPLATE_ROOTS, function(RegisterTemplateRootsEvent $e) {
+        Event::on(View::class, View::EVENT_REGISTER_CP_TEMPLATE_ROOTS, function(RegisterTemplateRootsEvent $event) {
             if (is_dir($baseDir = $this->getBasePath() . DIRECTORY_SEPARATOR . 'templates')) {
-                $e->roots[$this->id] = $baseDir;
+                $event->roots[$this->id] = $baseDir;
             }
         });
 
