@@ -23,12 +23,12 @@ abstract class BaseHelper
         }
     }
 
-    public static function setFileLogging($pluginHandle): void
+    public static function setFileLogging(string $pluginHandle, array $targetOptions = []): void
     {
         // Check that dispatcher exists, to avoid error when testing, since this is a bootstrapped module.
         // https://github.com/verbb/verbb-base/pull/1/files
         if ($dispatcher = Craft::getLogger()->dispatcher) {
-            $dispatcher->targets[] = new MonologTarget([
+            $dispatcher->targets[$pluginHandle] = new MonologTarget(array_replace_recursive([
                 'name' => $pluginHandle,
                 'categories' => [$pluginHandle],
                 'level' => LogLevel::INFO,
@@ -40,7 +40,7 @@ abstract class BaseHelper
                     dateFormat: 'Y-m-d H:i:s',
                     allowInlineLineBreaks: true,
                 ),
-            ]);
+            ], $targetOptions));
         }
     }
 }
