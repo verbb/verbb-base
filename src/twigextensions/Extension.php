@@ -20,15 +20,35 @@ class Extension extends AbstractExtension
     {
         return [
             new TwigFunction('vuiGetValue', [$this, 'getValue']),
+            new TwigFunction('displayName', [$this, 'displayName']),
         ];
     }
 
-    public function getValue($array, $key, $default = null)
+    public function getValue(array $array, string $key, mixed $default = null): mixed
     {
         if (is_array($array)) {
             return ArrayHelper::getValue($array, $key, $default);
         }
 
         return null;
+    }
+
+    public function displayName(object|string $value): ?string
+    {
+        if ((is_string($value) && class_exists($value)) || is_object($value)) {
+            if (method_exists($value, 'displayName')) {
+                return $value::displayName();
+            }
+
+            if (is_object($value)) {
+                $value = $value::class;
+            }
+
+            $classNameParts = explode('\\', $value);
+
+            return array_pop($classNameParts);
+        }
+
+        return '';
     }
 }
