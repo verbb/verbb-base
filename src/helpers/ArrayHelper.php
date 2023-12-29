@@ -3,6 +3,8 @@ namespace verbb\base\helpers;
 
 use craft\helpers\ArrayHelper as CraftArrayHelper;
 
+use Closure;
+
 class ArrayHelper extends CraftArrayHelper
 {
     // Static Methods
@@ -67,6 +69,10 @@ class ArrayHelper extends CraftArrayHelper
                 $keyHash = &$keyHash[$key];
             }
 
+            if (!is_array($keyHash)) {
+                $keyHash = [];
+            }
+
             $keyHash[$valueKey] = $value;
         }
 
@@ -87,6 +93,53 @@ class ArrayHelper extends CraftArrayHelper
         }
 
         return array_filter($array);
+    }
+
+    public static function filterNull(array $array): array
+    {
+        return self::recursiveFilter($array, function($value): bool {
+            return $value !== null;
+        });
+    }
+
+    public static function filterEmpty(array $array): array
+    {
+        return self::recursiveFilter($array, function($value): bool {
+            return $value !== '' && $value !== null;
+        });
+    }
+
+    public static function filterFalse(array $array): array
+    {
+        return self::recursiveFilter($array, function($value): bool {
+            return $value !== false;
+        });
+    }
+
+    public static function filterEmptyFalse(array $array): array
+    {
+        return self::recursiveFilter($array, function($value): bool {
+            return $value !== '' && $value !== null && $value !== false;
+        });
+    }
+
+    public static function recursiveImplode(array $array, string $glue = ',', bool $include_keys = false, bool $trim_all = false): string
+    {
+        $glued_string = '';
+
+        // Recursively iterates array and adds key/value to glued string
+        array_walk_recursive($array, function($value, $key) use ($glue, $include_keys, &$glued_string) {
+            $include_keys && $glued_string .= $key . $glue;
+            $glued_string .= $value . $glue;
+        });
+
+        // Removes last $glue from string
+        $glue !== '' && $glued_string = substr($glued_string, 0, -strlen($glue));
+
+        // Trim ALL whitespace
+        $trim_all && $glued_string = preg_replace("/(\s)/ixsm", '', $glued_string);
+
+        return (string)$glued_string;
     }
 
 }
