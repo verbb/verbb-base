@@ -10,6 +10,13 @@ trait LogTrait
     // Static Methods
     // =========================================================================
  
+    public static function log(string $message, array $params = []): void
+    {
+        Craft::$app->getDeprecator()->log(__METHOD__, 'The `log()` function is deprecated. Use `info()` instead.');
+
+        self::_log(Logger::LEVEL_INFO, $message, $params);
+    }
+
     public static function info(string $message, array $params = []): void
     {
         self::_log(Logger::LEVEL_INFO, $message, $params);
