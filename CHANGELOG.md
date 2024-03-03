@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.4 - 2024-03-03
+
+### Added
+- Add Templates service for easy cut-down, safe Twig string rendering.
+
 ## 2.0.3 - 2023-09-20
 
 ### Added
