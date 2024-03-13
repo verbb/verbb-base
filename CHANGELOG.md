@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.5 - 2024-03-14
+
+### Added
+- Add support for Craft and plugin Twig extensions in allowed Twig.
+
 ## 2.0.4 - 2024-03-03
 
 ### Added

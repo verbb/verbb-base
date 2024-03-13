@@ -148,6 +148,12 @@
       "pg" : 0,
       "sct" : 0
     },
+    "\/src\/services" : {
+      "ft" : 65536,
+      "oA" : 1,
+      "oAP" : "\/src\/services",
+      "oF" : 0
+    },
     "\/src\/templates" : {
       "ft" : 65536,
       "oA" : 1,
