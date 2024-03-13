@@ -5,10 +5,12 @@ use Craft;
 use craft\base\Component;
 use craft\helpers\Json;
 use craft\web\twig\Environment;
+use craft\web\twig\Extension;
 
 use Twig\Error\LoaderError;
 use Twig\Error\SyntaxError;
 use Twig\Extension\SandboxExtension;
+use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
 use Twig\Sandbox\SecurityPolicy;
 
@@ -17,6 +19,7 @@ use yii\base\Model;
 use yii\log\Logger;
 
 use Exception;
+use ReflectionClass;
 use Throwable;
 
 class Templates extends Component
@@ -40,6 +43,8 @@ class Templates extends Component
 
     public function init(): void
     {
+        $view = Craft::$app->getView();
+
         $tags = $this->allowedTags ?: $this->_getTags();
         $filters = $this->allowedFilters ?: $this->_getFilters();
         $functions = $this->allowedFunctions ?: $this->_getFunctions();
@@ -52,6 +57,19 @@ class Templates extends Component
 
         $this->_twigEnv = new Environment($loader);
         $this->_twigEnv->addExtension($sandbox);
+
+        // Load in Craft's own Twig extensions
+        $this->_twigEnv->addExtension(new Extension($view, $this->_twigEnv));
+
+        // Access any plugin-defined extensions (via a private property)
+        $reflection = new ReflectionClass($view);
+        $property = $reflection->getProperty('_twigExtensions');
+        $property->setAccessible(true);
+        $pluginExtensions = $property->getValue($view);
+
+        foreach ($pluginExtensions as $pluginExtension) {
+            $this->_twigEnv->addExtension($pluginExtension);
+        }
     }
 
     public function getTwig(): Environment
@@ -175,6 +193,29 @@ class Templates extends Component
             // 'use',
             // 'verbatim',
             // 'with',
+
+            // Craft-specific
+            // cache
+            // css
+            // dd
+            // dump
+            // exit
+            // header
+            // hook
+            // html
+            // js
+            // namespace
+            // nav
+            // paginate
+            // redirect
+            // requireAdmin
+            // requireEdition
+            // requireGuest
+            // requireLogin
+            // requirePermission
+            // script
+            // switch
+            // tag
         ];
     }
 
@@ -233,6 +274,80 @@ class Templates extends Component
             'trim',
             'upper',
             // 'url_encode',
+
+            // Craft-specific
+            // address
+            // append
+            // ascii
+            // atom
+            // attr
+            // base64_decode
+            // base64_encode
+            // boolean
+            'camel',
+            // column
+            'contains',
+            'currency',
+            'date',
+            'datetime',
+            // diff
+            // duration
+            // encenc
+            // explodeClass
+            // explodeStyle
+            // filesize
+            // filter
+            // float
+            // group
+            // hash
+            // httpdate
+            'id',
+            'index',
+            'indexOf',
+            // integer
+            // intersect
+            // json_encode
+            // json_decode
+            'kebab',
+            'lcfirst',
+            'length',
+            // literal
+            'markdown',
+            'md',
+            'merge',
+            'money',
+            // multisort
+            // namespace or ns
+            // namespaceAttributes
+            // namespaceInputId
+            // namespaceInputName
+            // number
+            // parseAttr
+            // parseRefs
+            'pascal',
+            'percentage',
+            // prepend
+            'purify',
+            // push
+            // removeClass
+            // replace
+            // rss
+            'snake',
+            // string
+            'time',
+            'timestamp',
+            'translate',
+            't',
+            // truncate
+            'ucfirst',
+            // unique
+            // unshift
+            'ucwords',
+            // values
+            // where
+            // widont
+            // without
+            // withoutKey
         ];
     }
 
@@ -254,6 +369,61 @@ class Templates extends Component
             'range',
             // 'source',
             // 'template_from_string',
+
+            // Craft-specific
+            // actionInput
+            // actionUrl
+            // alias
+            // attr
+            // beginBody
+            // block
+            // canCreateDrafts
+            // canDelete
+            // canDeleteForSite
+            // canDuplicate
+            // canSave
+            // canView
+            // ceil
+            // className
+            // clone
+            // collect
+            // combine
+            // configure
+            // constant
+            // cpUrl
+            // create
+            // csrfInput
+            // dataUrl
+            // date
+            // dump
+            // endBody
+            // expression
+            // failMessageInput
+            // floor
+            // getenv
+            // gql
+            // head
+            // hiddenInput
+            // include
+            // input
+            // max
+            // min
+            // ol
+            // parseBooleanEnv
+            // parseEnv
+            // plugin
+            // raw
+            // redirectInput
+            // renderObjectTemplate
+            // seq
+            // shuffle
+            // siteUrl
+            // source
+            // successMessageInput
+            // svg
+            // tag
+            // ul
+            // url
         ];
     }
 
