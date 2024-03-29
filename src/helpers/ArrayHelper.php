@@ -123,6 +123,13 @@ class ArrayHelper extends CraftArrayHelper
         });
     }
 
+    public static function filterNullFalse(array $array): array
+    {
+        return self::recursiveFilter($array, function($value): bool {
+            return $value !== null && $value !== false;
+        });
+    }
+
     public static function recursiveImplode(array $array, string $glue = ',', bool $include_keys = false, bool $trim_all = false): string
     {
         $glued_string = '';
