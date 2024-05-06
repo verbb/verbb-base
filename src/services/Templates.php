@@ -88,60 +88,49 @@ class Templates extends Component
 
         $twig = $this->getTwig();
 
-        try {
-            // Is this the first time we've parsed this template?
-            $cacheKey = md5($template);
+        // Is this the first time we've parsed this template?
+        $cacheKey = md5($template);
 
-            if (!isset($this->_objectTemplates[$cacheKey])) {
-                // Replace shortcut "{var}"s with "{{object.var}}"s, without affecting normal Twig tags
-                $template = Craft::$app->getView()->normalizeObjectTemplate($template);
+        if (!isset($this->_objectTemplates[$cacheKey])) {
+            // Replace shortcut "{var}"s with "{{object.var}}"s, without affecting normal Twig tags
+            $template = Craft::$app->getView()->normalizeObjectTemplate($template);
 
-                $this->_objectTemplates[$cacheKey] = $twig->createTemplate($template);
-            }
-
-            // Get the variables to pass to the template
-            if ($object instanceof Model) {
-                foreach ($object->attributes() as $name) {
-                    if (!isset($variables[$name]) && str_contains($template, $name)) {
-                        $variables[$name] = $object->$name;
-                    }
-                }
-            }
-
-            if ($object instanceof Arrayable) {
-                // See if we should be including any of the extra fields
-                $extra = [];
-
-                foreach ($object->extraFields() as $field => $definition) {
-                    if (is_int($field)) {
-                        $field = $definition;
-                    }
-
-                    if (preg_match('/\b' . preg_quote($field, '/') . '\b/', $template)) {
-                        $extra[] = $field;
-                    }
-                }
-
-                $variables += $object->toArray([], $extra, false);
-            }
-
-            $variables['object'] = $object;
-            $variables['_variables'] = $variables;
-
-            // Render it!
-            /** @var TwigTemplate $templateObj */
-            $templateObj = $this->_objectTemplates[$cacheKey];
-            return trim($templateObj->render($variables));
-        } catch (Throwable $e) {
-            $this->pluginClass::error(Craft::t('app', 'Error parsing template: “{template}”: “{message}” {file}:{line}', [
-                'template' => $originalTemplate,
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
+            $this->_objectTemplates[$cacheKey] = $twig->createTemplate($template);
         }
 
-        return '';
+        // Get the variables to pass to the template
+        if ($object instanceof Model) {
+            foreach ($object->attributes() as $name) {
+                if (!isset($variables[$name]) && str_contains($template, $name)) {
+                    $variables[$name] = $object->$name;
+                }
+            }
+        }
+
+        if ($object instanceof Arrayable) {
+            // See if we should be including any of the extra fields
+            $extra = [];
+
+            foreach ($object->extraFields() as $field => $definition) {
+                if (is_int($field)) {
+                    $field = $definition;
+                }
+
+                if (preg_match('/\b' . preg_quote($field, '/') . '\b/', $template)) {
+                    $extra[] = $field;
+                }
+            }
+
+            $variables += $object->toArray([], $extra, false);
+        }
+
+        $variables['object'] = $object;
+        $variables['_variables'] = $variables;
+
+        // Render it!
+        /** @var TwigTemplate $templateObj */
+        $templateObj = $this->_objectTemplates[$cacheKey];
+        return trim($templateObj->render($variables));
     }
 
     public function renderString(string $template, array $variables = []): string
@@ -153,18 +142,7 @@ class Templates extends Component
 
         $twig = $this->getTwig();
 
-        try {
-            return $twig->createTemplate($template)->render($variables);
-        } catch (Throwable $e) {
-            $this->pluginClass::error(Craft::t('app', 'Error parsing template: “{template}”: “{message}” {file}:{line}', [
-                'template' => $template,
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]));
-        }
-
-        return '';
+        return $twig->createTemplate($template)->render($variables);
     }
 
 
