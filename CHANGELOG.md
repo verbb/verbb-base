@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.1 - 2024-05-18
+
+### Added
+- Add `GlobalsExtension` and `StringLoaderExtension` to template parser.
+
+### Changed
+- Loosen template security policy to allow methods and properties.
+
 ## 3.0.0 - 2024-05-11
 
 ### Added
