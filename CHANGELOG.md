@@ -10,6 +10,14 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.6 - 2024-05-18
+
+### Added
+- Add `GlobalsExtension` and `StringLoaderExtension` to template parser.
+
+### Changed
+- Loosen template security policy to allow methods and properties.
+
 ## 2.0.5 - 2024-03-14
 
 ### Added

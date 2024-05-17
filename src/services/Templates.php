@@ -1,18 +1,20 @@
 <?php
 namespace verbb\base\services;
 
+use verbb\base\twig\SecurityPolicy;
+
 use Craft;
 use craft\base\Component;
 use craft\helpers\Json;
 use craft\web\twig\Environment;
 use craft\web\twig\Extension;
+use craft\web\twig\GlobalsExtension;
 
 use Twig\Error\LoaderError;
 use Twig\Error\SyntaxError;
 use Twig\Extension\SandboxExtension;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
-use Twig\Sandbox\SecurityPolicy;
 
 use yii\base\Arrayable;
 use yii\base\Model;
@@ -59,7 +61,9 @@ class Templates extends Component
         $this->_twigEnv->addExtension($sandbox);
 
         // Load in Craft's own Twig extensions
+        $this->_twigEnv->addExtension(new StringLoaderExtension());
         $this->_twigEnv->addExtension(new Extension($view, $this->_twigEnv));
+        $this->_twigEnv->addExtension(new GlobalsExtension());
 
         // Access any plugin-defined extensions (via a private property)
         $reflection = new ReflectionClass($view);
