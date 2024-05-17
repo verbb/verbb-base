@@ -6,6 +6,7 @@ use craft\base\Component;
 use craft\helpers\Json;
 use craft\web\twig\Environment;
 use craft\web\twig\Extension;
+use craft\web\twig\GlobalsExtension;
 
 use Twig\Error\LoaderError;
 use Twig\Error\SyntaxError;
@@ -59,7 +60,9 @@ class Templates extends Component
         $this->_twigEnv->addExtension($sandbox);
 
         // Load in Craft's own Twig extensions
+        $this->_twigEnv->addExtension(new StringLoaderExtension());
         $this->_twigEnv->addExtension(new Extension($view, $this->_twigEnv));
+        $this->_twigEnv->addExtension(new GlobalsExtension());
 
         // Access any plugin-defined extensions (via a private property)
         $reflection = new ReflectionClass($view);
