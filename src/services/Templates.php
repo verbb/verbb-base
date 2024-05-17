@@ -1,6 +1,8 @@
 <?php
 namespace verbb\base\services;
 
+use verbb\base\twig\SecurityPolicy;
+
 use Craft;
 use craft\base\Component;
 use craft\helpers\Json;
@@ -13,7 +15,6 @@ use Twig\Error\SyntaxError;
 use Twig\Extension\SandboxExtension;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
-use Twig\Sandbox\SecurityPolicy;
 
 use yii\base\Arrayable;
 use yii\base\Model;
