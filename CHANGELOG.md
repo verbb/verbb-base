@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.2 - 2024-05-18
+
+### Added
+- Add support for [Closure](https://github.com/nystudio107/craft-closure) module and add `collect` to allowed Twig functions.
+
+### Fixed
+- Fix an error when parsing templates.
+
 ## 3.0.1 - 2024-05-18
 
 ### Added
