@@ -15,6 +15,7 @@ use Twig\Error\SyntaxError;
 use Twig\Extension\SandboxExtension;
 use Twig\Extension\StringLoaderExtension;
 use Twig\Loader\FilesystemLoader;
+use Twig\Parser;
 
 use yii\base\Arrayable;
 use yii\base\Model;
@@ -23,6 +24,9 @@ use yii\log\Logger;
 use Exception;
 use ReflectionClass;
 use Throwable;
+
+use nystudio107\closure\helpers\Reflection as ReflectionHelper;
+use nystudio107\closure\twig\ClosureExpressionParser;
 
 class Templates extends Component
 {
@@ -73,6 +77,31 @@ class Templates extends Component
 
         foreach ($pluginExtensions as $pluginExtension) {
             $this->_twigEnv->addExtension($pluginExtension);
+        }
+
+        // Some plugins like Closure (https://github.com/nystudio107/craft-closure) don't register things in the traditional way
+        if (class_exists(ClosureExpressionParser::class)) {
+            try {
+                $parserReflection = ReflectionHelper::getReflectionProperty($this->_twigEnv, 'parser');
+                $parserReflection->setAccessible(true);
+                $parser = $parserReflection->getValue($this->_twigEnv);
+
+                if ($parser === null) {
+                    $parser = new Parser($this->_twigEnv);
+                    $parserReflection->setValue($this->_twigEnv, $parser);
+                }
+
+                $expressionParserReflection = ReflectionHelper::getReflectionProperty($parser, 'expressionParser');
+                $expressionParserReflection->setAccessible(true);
+                $expressionParser = new ClosureExpressionParser($parser, $this->_twigEnv);
+                $expressionParserReflection->setValue($parser, $expressionParser);
+            } catch (Throwable $e) {
+                $this->pluginClass::error(Craft::t('app', 'Error parsing template: “{message}” {file}:{line}', [
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ]));
+            }
         }
     }
 
@@ -390,7 +419,7 @@ class Templates extends Component
             // ceil
             // className
             // clone
-            // collect
+            'collect',
             // combine
             // configure
             // constant
