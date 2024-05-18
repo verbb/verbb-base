@@ -2,7 +2,9 @@
 namespace verbb\base\twig;
 
 use Twig\Markup;
-use Twig\Sandbox\SecurityNotAllowedMethodError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
 use Twig\Template;
 

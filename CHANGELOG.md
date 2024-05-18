@@ -18,6 +18,14 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.7 - 2024-05-18
+
+### Added
+- Add support for [Closure](https://github.com/nystudio107/craft-closure) module and add `collect` to allowed Twig functions.
+
+### Fixed
+- Fix an error when parsing templates.
+
 ## 2.0.6 - 2024-05-18
 
 ### Added
