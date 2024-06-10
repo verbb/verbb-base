@@ -166,6 +166,14 @@
       "oAP" : "\/src\/templates",
       "oF" : 0
     },
+    "\/src\/twig\/SecurityPolicy.php" : {
+      "cB" : 0,
+      "ft" : 8192,
+      "hM" : 0,
+      "oA" : 2,
+      "oAP" : "\/src\/twig\/SecurityPolicy.php",
+      "oF" : 0
+    },
     "\/src\/twigextensions\/Extension.php" : {
       "cB" : 0,
       "ft" : 8192,

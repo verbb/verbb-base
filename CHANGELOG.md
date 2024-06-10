@@ -26,6 +26,11 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.8 - 2024-06-10
+
+### Added
+- Allow more Twig functions/filters.
+
 ## 2.0.7 - 2024-05-18
 
 ### Added
