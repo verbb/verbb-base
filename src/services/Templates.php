@@ -363,7 +363,6 @@ class Templates extends Component
             'purify',
             // push
             // removeClass
-            // replace
             // rss
             'snake',
             // string
@@ -394,7 +393,7 @@ class Templates extends Component
             'date',
             // 'dump',
             // 'html_classes',
-            // 'include',
+            'include',
             'max',
             'min',
             // 'parent',
@@ -405,9 +404,9 @@ class Templates extends Component
 
             // Craft-specific
             // actionInput
-            // actionUrl
+            'actionUrl',
             // alias
-            // attr
+            'attr',
             // beginBody
             // block
             // canCreateDrafts
@@ -423,11 +422,10 @@ class Templates extends Component
             // combine
             // configure
             // constant
-            // cpUrl
+            'cpUrl',
             // create
             // csrfInput
-            // dataUrl
-            // date
+            'dataUrl',
             // dump
             // endBody
             // expression
@@ -437,26 +435,23 @@ class Templates extends Component
             // gql
             // head
             // hiddenInput
-            // include
             // input
-            // max
-            // min
             // ol
             // parseBooleanEnv
             // parseEnv
             // plugin
-            // raw
+            'raw',
             // redirectInput
             // renderObjectTemplate
-            // seq
-            // shuffle
-            // siteUrl
+            // 'seq'
+            // 'shuffle'
+            'siteUrl',
             // source
             // successMessageInput
-            // svg
-            // tag
+            'svg',
+            'tag',
             // ul
-            // url
+            'url',
         ];
     }
 
