@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.3 - 2024-06-10
+
+### Added
+- Allow more Twig functions/filters.
+
 ## 3.0.2 - 2024-05-18
 
 ### Added
