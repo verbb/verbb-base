@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.4 - 2024-09-14
+
+### Added
+- Add `proxyField` macro to simplify translating field instructions with variables.
+- Add Locale-switching helper function to assist with rendering strings in a given language or locale.
+
 ## 3.0.3 - 2024-06-10
 
 ### Added
