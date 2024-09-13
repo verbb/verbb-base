@@ -31,6 +31,11 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.9 - 2024-09-14
+
+### Added
+- Add `proxyField` macro to simplify translating field instructions with variables.
+
 ## 2.0.8 - 2024-06-10
 
 ### Added
