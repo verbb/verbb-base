@@ -71,9 +71,19 @@ class Templates extends Component
 
         // Access any plugin-defined extensions (via a private property)
         $reflection = new ReflectionClass($view);
-        $property = $reflection->getProperty('_twigExtensions');
-        $property->setAccessible(true);
-        $pluginExtensions = $property->getValue($view);
+
+        $pluginExtensions = [];
+
+        // Handle Craft 4.13.0+
+        if ($reflection->hasProperty('_siteTwigExtensions')) {
+            $property = $reflection->getProperty('_siteTwigExtensions');
+            $property->setAccessible(true);
+            $pluginExtensions = $property->getValue($view);
+        } else if ($reflection->hasProperty('_twigExtensions')) {
+            $property = $reflection->getProperty('_twigExtensions');
+            $property->setAccessible(true);
+            $pluginExtensions = $property->getValue($view);
+        }
 
         foreach ($pluginExtensions as $pluginExtension) {
             $this->_twigEnv->addExtension($pluginExtension);
