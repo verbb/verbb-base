@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.10 - 2024-11-13
+
+### Fixed
+- Fix an incompatibility with Craft 4.13.0+.
+
 ## 2.0.9 - 2024-09-14
 
 ### Added
