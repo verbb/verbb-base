@@ -3,7 +3,7 @@
 ## 3.0.5 - 2024-11-13
 
 ### Fixed
-- Fix an incompatibility with Craft 4.13.0+.
+- Fix an incompatibility with Craft 5.5.0+.
 
 ## 3.0.4 - 2024-09-14
 
