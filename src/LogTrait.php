@@ -38,8 +38,8 @@ trait LogTrait
  
     private static function _log(int|string $level, string $message, array $params = []): void
     {
-        if ($params) {
-            $message = Craft::t(self::$plugin->handle, $message, $params);
+        if ($params && self::getInstance()) {
+            $message = Craft::t(self::getInstance()->handle, $message, $params);
         }
 
         // Determine the calling function automatically so we don't have to use `__METHOD__` everywhere.
