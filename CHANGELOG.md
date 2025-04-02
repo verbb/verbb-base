@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.6 - 2025-04-03
+
+### Fixed
+- Fix an error when calling `self::$plugin` for modules or plugins that don’t define this property.
+
 ## 3.0.5 - 2024-11-13
 
 ### Fixed
