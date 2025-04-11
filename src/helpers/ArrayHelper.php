@@ -10,7 +10,8 @@ class ArrayHelper extends CraftArrayHelper
     // Static Methods
     // =========================================================================
 
-    public static function flatten(array $data, string $separator = '.'): array
+    // Deliberate lack of typing to not conflict with `yii\helpers\BaseArrayHelper::flatten`
+    public static function flatten($data, $separator = '.'): array
     {
         $result = [];
         $stack = [];
