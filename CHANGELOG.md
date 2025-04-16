@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.8 - 2025-04-16
+
+### Added
+- Add plugin settings and general layouts for easier consistency in plugins.
+
 ## 3.0.7 - 2025-04-11
 
 ### Fixed
