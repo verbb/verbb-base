@@ -1,0 +1,61 @@
+{% extends 'verbb-base/_layouts' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set selectedSubnavItem = 'settings' %}
+{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
+
+{% set pageTitle = pageTitle ?? false %}
+{% set pageAction = pageAction ?? false %}
+{% set pageUrl = pageUrl ?? false %}
+{% set pageTabs = pageTabs ?? [] %}
+
+{% if pageUrl %}
+    {% set formActions = [
+        {
+            label: 'Save and continue editing' | t('app'),
+            redirect: pageUrl | hash,
+            shortcut: true,
+            retainScroll: true,
+        },
+    ] %}
+{% endif %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for handle, item in pageTabs %}
+                {% if item.heading is defined %}
+                    <li class="heading"><span>{{ item.heading }}</span></li>
+                {% else %}
+                    <li>
+                        <a href="{{ item.url }}" {% if handle == selectedTab %}class="sel"{% endif %}>
+                            {{ item.title }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block blockContent %}
+    {% if pageTitle %}
+        <h2>{{ pageTitle }}</h2>
+    {% endif %}
+
+    {% if pageAction %}
+        {{ actionInput(pageAction) }}
+    {% endif %}
+
+    {% if pageUrl %}
+        {{ redirectInput(pageUrl) }}
+    {% endif %}
+
+    {% block settingsMeta %}{% endblock %}
+
+    {% namespace 'settings' %}
+        {% block settingsContent %}{% endblock %}
+    {% endnamespace %}
+{% endblock %}
