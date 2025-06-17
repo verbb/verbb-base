@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.9 - 2025-06-17
+
+### Added
+- Add `CachedElementQuery` class for some plugins and element query caching.
+
 ## 3.0.8 - 2025-04-16
 
 ### Added
