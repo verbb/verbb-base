@@ -2,7 +2,7 @@
     "name": "verbb/base",
     "description": "Common utilities and building-blocks for Verbb plugins for Craft CMS.",
     "type": "yii-module",
-    "version": "3.0.9",
+    "version": "4.0.0-alpha.1",
     "support": {
         "email": "support@verbb.io",
         "issues": "https://github.com/verbb/verbb-base/issues?state=open",
@@ -18,12 +18,14 @@
         }
     ],
     "require": {
-        "php": "^8.2",
-        "craftcms/cms": "^5.0.0"
+        "php": "^8.4",
+        "craftcms/cms": "6.x-dev"
     },
     "autoload": {
         "psr-4": {
             "verbb\\base\\": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

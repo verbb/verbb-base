@@ -38,6 +38,9 @@ class Plugin
     {
         $moduleId = 'verbb-base';
 
+        // Craft 6 compatibility
+        app(Craft::class);
+
         if (!Craft::$app->hasModule($moduleId)) {
             Craft::$app->setModule($moduleId, new Base($moduleId));
 
