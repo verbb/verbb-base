@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.11 - 2025-05-10
+
+### Fixed
+- Enforce Twig sandbox method/property allow-lists in SecurityPolicy.
+
 ## 2.0.10 - 2024-11-13
 
 ### Fixed
