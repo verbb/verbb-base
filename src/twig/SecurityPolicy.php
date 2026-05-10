@@ -4,6 +4,8 @@ namespace verbb\base\twig;
 use Twig\Markup;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Sandbox\SecurityNotAllowedMethodError;
+use Twig\Sandbox\SecurityNotAllowedPropertyError;
 use Twig\Sandbox\SecurityNotAllowedTagError;
 use Twig\Sandbox\SecurityPolicyInterface;
 use Twig\Template;
@@ -83,11 +85,31 @@ class SecurityPolicy implements SecurityPolicyInterface
 
     public function checkMethodAllowed($obj, $method): void
     {
-        // Allow all methods
+        if ($obj instanceof Template || $obj instanceof Markup) {
+            return;
+        }
+
+        $method = strtolower($method);
+
+        foreach ($this->allowedMethods as $class => $methods) {
+            if ($obj instanceof $class && in_array($method, $methods, true)) {
+                return;
+            }
+        }
+
+        $class = $obj::class;
+        throw new SecurityNotAllowedMethodError(sprintf('Calling "%s" method on a "%s" object is not allowed.', $method, $class), $class, $method);
     }
 
     public function checkPropertyAllowed($obj, $property): void
     {
-        // Allow all proprties
+        foreach ($this->allowedProperties as $class => $properties) {
+            if ($obj instanceof $class && in_array($property, is_array($properties) ? $properties : [$properties], true)) {
+                return;
+            }
+        }
+
+        $class = $obj::class;
+        throw new SecurityNotAllowedPropertyError(sprintf('Calling "%s" property on a "%s" object is not allowed.', $property, $class), $class, $property);
     }
 }
