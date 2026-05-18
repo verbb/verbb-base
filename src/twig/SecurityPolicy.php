@@ -1,6 +1,11 @@
 <?php
 namespace verbb\base\twig;
 
+use craft\base\Element as CraftElement;
+use craft\base\Model;
+
+use Closure;
+
 use Twig\Markup;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
@@ -104,12 +109,41 @@ class SecurityPolicy implements SecurityPolicyInterface
     public function checkPropertyAllowed($obj, $property): void
     {
         foreach ($this->allowedProperties as $class => $properties) {
-            if ($obj instanceof $class && in_array($property, is_array($properties) ? $properties : [$properties], true)) {
+            if ($obj instanceof $class && $this->_isPropertyAllowed($obj, $property, $properties)) {
                 return;
             }
         }
 
+        if ($this->_isDefaultPropertyAllowed($obj, $property)) {
+            return;
+        }
+
         $class = $obj::class;
         throw new SecurityNotAllowedPropertyError(sprintf('Calling "%s" property on a "%s" object is not allowed.', $property, $class), $class, $property);
+    }
+
+    // Private Methods
+    // =========================================================================
+
+    private function _isPropertyAllowed(object $obj, string $property, mixed $properties): bool
+    {
+        if ($properties instanceof Closure) {
+            return (bool)$properties($obj, $property);
+        }
+
+        return in_array($property, is_array($properties) ? $properties : [$properties], true);
+    }
+
+    private function _isDefaultPropertyAllowed(object $obj, string $property): bool
+    {
+        if ($obj instanceof Model && in_array($property, $obj->attributes(), true)) {
+            return true;
+        }
+
+        if ($obj instanceof CraftElement) {
+            return $obj->getFieldLayout()?->getFieldByHandle($property) !== null;
+        }
+
+        return false;
     }
 }
