@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.12 - 2026-05-27
+
+### Changed
+- Respect Craft Monolog target config for Verbb plugin logs.
+
 ## 3.0.11 - 2026-05-19
 
 ### Changed
