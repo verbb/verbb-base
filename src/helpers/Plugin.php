@@ -50,6 +50,9 @@ class Plugin
         // Check that dispatcher exists, to avoid error when testing, since this is a bootstrapped module.
         // https://github.com/verbb/verbb-base/pull/1/files
         if ($dispatcher = Craft::getLogger()->dispatcher) {
+            $monologTargetConfig = $dispatcher->monologTargetConfig;
+            unset($monologTargetConfig['class']);
+
             $dispatcher->targets[$category] = new MonologTarget(array_replace_recursive([
                 'name' => $pluginHandle,
                 'categories' => [$category],
@@ -61,7 +64,7 @@ class Plugin
                     dateFormat: 'Y-m-d H:i:s',
                     allowInlineLineBreaks: true,
                 ),
-            ], $targetOptions));
+            ], $monologTargetConfig, $targetOptions));
         }
     }
 
