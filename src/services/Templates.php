@@ -186,7 +186,7 @@ class Templates extends Component
         }
     }
 
-    public function renderString(string $template, array $variables = []): string
+    public function renderString(string $template, array $variables = [], bool $escapeHtml = false): string
     {
         // If there are no dynamic tags, just return the template
         if (!str_contains($template, '{')) {
@@ -195,7 +195,19 @@ class Templates extends Component
 
         $twig = $this->getTwig();
 
-        return $twig->createTemplate($template)->render($variables);
+        // Match `craft\web\View::renderString()` — disable auto-escaping by default. Callers that need
+        // escaping can pass `$escapeHtml = true`.
+        if (!$escapeHtml) {
+            $twig->setDefaultEscaperStrategy(false);
+        }
+
+        try {
+            return $twig->createTemplate($template)->render($variables);
+        } finally {
+            if (!$escapeHtml) {
+                $twig->setDefaultEscaperStrategy();
+            }
+        }
     }
 
 
