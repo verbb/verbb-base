@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.13 - 2026-08-05
+
+### Fixed
+- Fixed object templates escaping HTML variables, outputting them as plain text. Craft 5.10.13 no longer normalises shorthand tags (`{someVar}`) with the `raw` filter, relying on the escaper strategy being disabled while rendering instead.
+- Aligned `renderString()` with Craft’s default of not auto-escaping HTML (optional `$escapeHtml` flag to opt in).
+
 ## 3.0.12 - 2026-05-27
 
 ### Changed
