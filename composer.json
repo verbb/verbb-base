@@ -2,7 +2,7 @@
     "name": "verbb/base",
     "description": "Common utilities and building-blocks for Verbb plugins for Craft CMS.",
     "type": "yii-module",
-    "version": "3.0.13",
+    "version": "3.0.14",
     "support": {
         "email": "support@verbb.io",
         "issues": "https://github.com/verbb/verbb-base/issues?state=open",

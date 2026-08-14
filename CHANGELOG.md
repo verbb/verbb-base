@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.14 - 2026-08-14
+
+### Changed
+- Twig sandbox now allows methods/properties on safe Craft value objects by class family (`ElementInterface`, `ElementQueryInterface`, `ElementCollection`, `DateTimeInterface`, Illuminate `Enumerable`), instead of requiring plugins to whitelist every method name.
+- Added `allowedClasses` support to `SecurityPolicy` / `Templates` (merged with the defaults above).
+- Honour Craft’s `#[AllowedInSandbox]` attributes when present.
+
+### Fixed
+- Fixed legitimate element-query usage in sandboxed templates (e.g. `{{ fieldHandle.one().title }}`) being blocked after the 3.0.10 allow-list enforcement.
+
 ## 3.0.13 - 2026-08-05
 
 ### Fixed

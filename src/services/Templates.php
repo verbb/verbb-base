@@ -39,6 +39,7 @@ class Templates extends Component
     public array $allowedFunctions = [];
     public array $allowedMethods = [];
     public array $allowedProperties = [];
+    public array $allowedClasses = [];
 
     private Environment $_twigEnv;
     private array $_objectTemplates = [];
@@ -56,8 +57,10 @@ class Templates extends Component
         $functions = $this->allowedFunctions ?: $this->_getFunctions();
         $methods = $this->allowedMethods ?: $this->_getMethods();
         $properties = $this->allowedProperties ?: $this->_getProperties();
+        // Merged with SecurityPolicy defaults (Element, ElementQuery, etc.)
+        $classes = $this->allowedClasses ?: $this->_getClasses();
 
-        $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
+        $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions, $classes);
         $loader = new FilesystemLoader();
         $sandbox = new SandboxExtension($policy, true);
 
@@ -471,6 +474,11 @@ class Templates extends Component
     }
 
     private function _getProperties(): array
+    {
+        return [];
+    }
+
+    private function _getClasses(): array
     {
         return [];
     }
