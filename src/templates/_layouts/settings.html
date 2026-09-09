@@ -4,12 +4,18 @@
 {% import 'verbb-base/_macros' as macros %}
 
 {% set selectedSubnavItem = 'settings' %}
-{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) ?? 'general' %}
+{% set selectedTab = selectedTab ?? craft.app.request.getSegment(3) %}
+{% set selectedTab = selectedTab ?: 'general' %}
 
 {% set pageTitle = pageTitle ?? false %}
 {% set pageAction = pageAction ?? false %}
 {% set pageUrl = pageUrl ?? false %}
 {% set pageTabs = pageTabs ?? [] %}
+
+{# Child pages should set pageTitle; default title from it when unset. #}
+{% if title is not defined and pageTitle %}
+    {% set title = pageTitle %}
+{% endif %}
 
 {% if pageUrl %}
     {% set formActions = [

@@ -1,5 +1,8 @@
 {% extends parentLayout ?? '_layouts/cp' %}
 
+{# Footer credit pill CSS/JS lives here with the markup. #}
+{% do view.registerAssetBundle('verbb\\base\\assetbundles\\CpAsset') -%}
+
 {% block content %}
     {% block blockContent %}
 
