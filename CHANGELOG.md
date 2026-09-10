@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.15 - 2026-09-10
+
+### Fixed
+- Fix a Twig sandbox escape where Illuminate `Collection`/`Enumerable` methods such as `map`, `each`, and `filter` accepted PHP string callables (arbitrary function invocation).
+- Remove `collect` from the default sandboxed Twig function allow-list, and stop allowing unrestricted methods on broad Illuminate `Enumerable` by class family.
+- Keep `ElementCollection` allowed for legitimate `[0]` / `count` access, while denying callable-accepting collection methods (`map`, `each`, `filter`, `first`, …).
+- Honour Craft’s `AllowableInSandbox` deny-by-default for Element objects instead of falling through to a blanket class-family method allow (still permitting `__toString` for printing elements).
+- Deny Yii `Component` behaviour APIs (`attachBehavior`, etc.) on class-family-allowed objects.
+
 ## 3.0.14 - 2026-08-14
 
 ### Changed
