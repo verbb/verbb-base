@@ -431,7 +431,7 @@ class Templates extends Component
             // ceil
             // className
             // clone
-            'collect',
+            // collect — removed: Collection::map/each/etc. accept string callables (sandbox escape)
             // combine
             // configure
             // constant
