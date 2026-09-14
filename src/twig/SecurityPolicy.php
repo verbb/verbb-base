@@ -26,9 +26,9 @@ use Twig\Template;
  * Twig sandbox security policy for Verbb plugins.
  *
  * Tags/filters/functions stay deny-by-default via explicit allow-lists.
- * Methods/properties on common Craft value objects are allowed by class family,
- * matching Craft’s own sandbox approach (`allowedClasses` + `#[AllowedInSandbox]`),
- * so plugins don’t need to whitelist every legitimate `.one()` / `.title` call.
+ * Methods/properties on common Craft value objects are allowed by class family
+ * for element queries / dates, while Elements prefer Craft’s
+ * `AllowableInSandbox` / `#[AllowedInSandbox]` when available.
  */
 class SecurityPolicy implements SecurityPolicyInterface
 {
@@ -111,6 +111,13 @@ class SecurityPolicy implements SecurityPolicyInterface
      * These are value/query objects commonly exposed in email notifications and
      * similar user-editable Twig — not service containers or app internals.
      *
+     * `ElementCollection` is allowed for `[0]` / `count` / etc., but callable-accepting
+     * Illuminate methods (`map`, `each`, `filter`, `first`, …) are denied in
+     * `_isSafeMethodName()` — a PHP string is a valid callable.
+     *
+     * Broad Illuminate `Enumerable` is intentionally omitted so `collect()` results
+     * are not trusted by default unless they are Craft element collections.
+     *
      * @return class-string[]
      */
     public function getDefaultAllowedClasses(): array
@@ -124,11 +131,6 @@ class SecurityPolicy implements SecurityPolicyInterface
         // ElementCollection exists from Craft 4.3+
         if (class_exists(\craft\elements\ElementCollection::class)) {
             $classes[] = \craft\elements\ElementCollection::class;
-        }
-
-        // Illuminate collections when present
-        if (interface_exists(\Illuminate\Support\Enumerable::class)) {
-            $classes[] = \Illuminate\Support\Enumerable::class;
         }
 
         return $classes;
@@ -169,13 +171,31 @@ class SecurityPolicy implements SecurityPolicyInterface
             }
         }
 
+        // Craft Elements implement AllowableInSandbox and deny by default; only
+        // #[AllowedInSandbox] methods/properties (and explicit allow-lists above) are safe.
+        // Do not fall through to class-family allow for these objects.
+        $allowable = 'craft\\web\\twig\\AllowableInSandbox';
+        if (interface_exists($allowable) && $obj instanceof $allowable) {
+            // Printing elements in Twig requires __toString (e.g. {{ entry }}, |join).
+            if (strtolower($method) === '__tostring') {
+                return;
+            }
+
+            if ($obj->methodAllowedInSandbox($method) || $this->_hasAllowedInSandboxMethod($obj, $method)) {
+                return;
+            }
+
+            $class = $obj::class;
+            throw new SecurityNotAllowedMethodError(sprintf('Calling "%s" method on a "%s" object is not allowed.', $method, $class), $class, $method);
+        }
+
         // Honour Craft’s #[AllowedInSandbox] attributes when available (Craft 4.17+)
         if ($this->_hasAllowedInSandboxMethod($obj, $method)) {
             return;
         }
 
-        // Allow all non-dangerous methods on safe value/query object families
-        if ($this->_isClassAllowed($obj) && $this->_isSafeMethodName($method)) {
+        // Allow non-dangerous methods on safe value/query object families
+        if ($this->_isClassAllowed($obj) && $this->_isSafeMethodName($method, $obj)) {
             return;
         }
 
@@ -189,6 +209,20 @@ class SecurityPolicy implements SecurityPolicyInterface
             if ($obj instanceof $class && $this->_isPropertyAllowed($obj, $property, $properties)) {
                 return;
             }
+        }
+
+        $allowable = 'craft\\web\\twig\\AllowableInSandbox';
+        if (interface_exists($allowable) && $obj instanceof $allowable) {
+            if ($obj->propertyAllowedInSandbox($property) || $this->_hasAllowedInSandboxProperty($obj, $property)) {
+                return;
+            }
+
+            if ($this->_isDefaultPropertyAllowed($obj, $property)) {
+                return;
+            }
+
+            $class = $obj::class;
+            throw new SecurityNotAllowedPropertyError(sprintf('Calling "%s" property on a "%s" object is not allowed.', $property, $class), $class, $property);
         }
 
         if ($this->_hasAllowedInSandboxProperty($obj, $property)) {
@@ -253,16 +287,49 @@ class SecurityPolicy implements SecurityPolicyInterface
     }
 
     /**
-     * Block PHP magic methods on allowed classes, except `__toString` which is
-     * needed for printing elements/queries. Mirrors Craft’s sandbox behaviour.
+     * Block magic methods and known sandbox-escape gadgets on allowed classes.
+     *
+     * Class-family allowlists must not expose:
+     * - Illuminate Collection methods that accept PHP callables (a string is a callable)
+     * - Yii `Component` behaviour APIs used in prior Craft sandbox escapes
      */
-    private function _isSafeMethodName(string $method): bool
+    private function _isSafeMethodName(string $method, ?object $obj = null): bool
     {
-        if (!str_starts_with($method, '__')) {
-            return true;
+        $methodLower = strtolower($method);
+
+        if (str_starts_with($methodLower, '__')) {
+            return $methodLower === '__tostring';
         }
 
-        return strtolower($method) === '__tostring';
+        static $yiiDenied = [
+            'attachbehavior', 'attachbehaviors', 'detachbehavior', 'detachbehaviors',
+            'asa', 'invoke',
+        ];
+
+        if (in_array($methodLower, $yiiDenied, true)) {
+            return false;
+        }
+
+        // Collection APIs that accept callables — a PHP string is a valid callable.
+        if (
+            $obj !== null &&
+            interface_exists(\Illuminate\Support\Enumerable::class) &&
+            $obj instanceof \Illuminate\Support\Enumerable
+        ) {
+            static $collectionDenied = [
+                'map', 'each', 'filter', 'reject', 'flatmap', 'mapwithkeys', 'mapintoskeys',
+                'transform', 'pipe', 'tap', 'partition', 'reduce', 'reduceright',
+                'sum', 'sortby', 'sortbydesc', 'groupby', 'groupbyassoc',
+                'contains', 'doesntcontain', 'first', 'last', 'sole', 'ensure',
+                'times', 'macro', 'mixin', 'proxy',
+            ];
+
+            if (in_array($methodLower, $collectionDenied, true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function _allowedInSandboxAttribute(): ?string
