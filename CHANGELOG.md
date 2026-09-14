@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.16 - 2026-09-14
+
+### Changed
+- Allow safe model and element properties in sandboxed templates.
+- Enforce Twig sandbox method/property allow-lists in SecurityPolicy.
+
 ## 3.0.15 - 2026-09-10
 
 ### Fixed
