@@ -102,6 +102,35 @@
 - Now requires PHP `8.2.0+`.
 - Now requires Craft `5.0.0+`.
 
+## 2.0.14 - 2026-09-10
+
+### Fixed
+- Fix a Twig sandbox escape where Illuminate `Collection`/`Enumerable` methods such as `map`, `each`, and `filter` accepted PHP string callables (arbitrary function invocation).
+- Remove `collect` from the default sandboxed Twig function allow-list, and stop allowing unrestricted methods on broad Illuminate `Enumerable` by class family.
+- Keep `ElementCollection` allowed for legitimate `[0]` / `count` access, while denying callable-accepting collection methods (`map`, `each`, `filter`, `first`, …).
+- Honour Craft’s `AllowableInSandbox` deny-by-default for Element objects (when present) instead of falling through to a blanket class-family method allow (still permitting `__toString` for printing elements).
+- Deny Yii `Component` behaviour APIs (`attachBehavior`, etc.) on class-family-allowed objects.
+
+## 2.0.13 - 2026-08-14
+
+### Changed
+- Twig sandbox now allows methods/properties on safe Craft value objects by class family (`ElementInterface`, `ElementQueryInterface`, `ElementCollection` when available, `DateTimeInterface`, Illuminate `Enumerable`), instead of requiring plugins to whitelist every method name.
+- Added `allowedClasses` support to `SecurityPolicy` / `Templates` (merged with the defaults above).
+- Honour Craft’s `#[AllowedInSandbox]` attributes when present (Craft 4.17+).
+
+### Fixed
+- Fixed legitimate element-query usage in sandboxed templates (e.g. `{{ fieldHandle.one().title }}`) being blocked after the 2.0.11 allow-list enforcement.
+
+## 2.0.12 - 2026-05-19
+
+### Changed
+- Allow safe model and element properties in sandboxed templates.
+
+## 2.0.11 - 2026-05-10
+
+### Fixed
+- Enforce Twig sandbox method/property allow-lists in SecurityPolicy.
+
 ## 2.0.10 - 2024-11-13
 
 ### Fixed
