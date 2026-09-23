@@ -1,18 +1,18 @@
 <?php
 namespace verbb\base\twig;
 
-use Closure;
-
 use craft\base\Element as CraftElement;
 use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\elements\db\ElementQueryInterface;
 
+use ArrayAccess;
+use Closure;
 use DateTimeInterface;
-
 use ReflectionClass;
 use ReflectionException;
 
+use Illuminate\Support\Enumerable;
 use Twig\Markup;
 use Twig\Sandbox\SecurityNotAllowedFilterError;
 use Twig\Sandbox\SecurityNotAllowedFunctionError;
@@ -85,16 +85,10 @@ class SecurityPolicy implements SecurityPolicyInterface
         $this->allowedFunctions = $functions;
     }
 
-    /**
-     * @param class-string[] $classes
-     */
     public function setAllowedClasses(array $classes): void
     {
-        // Always keep the built-in safe defaults; plugins can only add classes.
-        $this->allowedClasses = array_values(array_unique(array_merge(
-            $this->getDefaultAllowedClasses(),
-            $classes
-        )));
+        // Legacy callers always retain the built-in safe value-object families.
+        $this->allowedClasses = array_values(array_unique(array_merge($this->getDefaultAllowedClasses(), $classes)));
     }
 
     /**
@@ -111,9 +105,8 @@ class SecurityPolicy implements SecurityPolicyInterface
      * These are value/query objects commonly exposed in email notifications and
      * similar user-editable Twig — not service containers or app internals.
      *
-     * `ElementCollection` is allowed for `[0]` / `count` / etc., but callable-accepting
-     * Illuminate methods (`map`, `each`, `filter`, `first`, …) are denied in
-     * `_isSafeMethodName()` — a PHP string is a valid callable.
+     * Collections expose only a small set of non-callback methods and real offsets.
+     * Broad class permissions must not grant access to their callable or proxy APIs.
      *
      * Broad Illuminate `Enumerable` is intentionally omitted so `collect()` results
      * are not trusted by default unless they are Craft element collections.
@@ -171,6 +164,21 @@ class SecurityPolicy implements SecurityPolicyInterface
             }
         }
 
+        // Check collections before Craft annotations or broad class permissions.
+        if ($obj instanceof Enumerable) {
+            $methods = [
+                '__tostring', 'all', 'count', 'containsoneitem', 'has', 'ids',
+                'isempty', 'isnotempty', 'keys', 'offsetexists', 'offsetget', 'values',
+            ];
+
+            if ($this->_isClassAllowed($obj) && in_array($methodLower, $methods, true)) {
+                return;
+            }
+
+            $class = $obj::class;
+            throw new SecurityNotAllowedMethodError(sprintf('Calling "%s" method on a "%s" object is not allowed.', $method, $class), $class, $method);
+        }
+
         // Craft Elements implement AllowableInSandbox and deny by default; only
         // #[AllowedInSandbox] methods/properties (and explicit allow-lists above) are safe.
         // Do not fall through to class-family allow for these objects.
@@ -195,7 +203,7 @@ class SecurityPolicy implements SecurityPolicyInterface
         }
 
         // Allow non-dangerous methods on safe value/query object families
-        if ($this->_isClassAllowed($obj) && $this->_isSafeMethodName($method, $obj)) {
+        if ($this->_isClassAllowed($obj) && $this->_isSafeMethodName($method)) {
             return;
         }
 
@@ -209,6 +217,16 @@ class SecurityPolicy implements SecurityPolicyInterface
             if ($obj instanceof $class && $this->_isPropertyAllowed($obj, $property, $properties)) {
                 return;
             }
+        }
+
+        // Illuminate's virtual properties can create higher-order callable proxies.
+        if ($obj instanceof Enumerable) {
+            if ($this->_isClassAllowed($obj) && $obj instanceof ArrayAccess && $obj->offsetExists($property)) {
+                return;
+            }
+
+            $class = $obj::class;
+            throw new SecurityNotAllowedPropertyError(sprintf('Calling "%s" property on a "%s" object is not allowed.', $property, $class), $class, $property);
         }
 
         $allowable = 'craft\\web\\twig\\AllowableInSandbox';
@@ -289,11 +307,9 @@ class SecurityPolicy implements SecurityPolicyInterface
     /**
      * Block magic methods and known sandbox-escape gadgets on allowed classes.
      *
-     * Class-family allowlists must not expose:
-     * - Illuminate Collection methods that accept PHP callables (a string is a callable)
-     * - Yii `Component` behaviour APIs used in prior Craft sandbox escapes
+     * Class-family allowlists must not expose Yii Component behaviour APIs.
      */
-    private function _isSafeMethodName(string $method, ?object $obj = null): bool
+    private function _isSafeMethodName(string $method): bool
     {
         $methodLower = strtolower($method);
 
@@ -308,25 +324,6 @@ class SecurityPolicy implements SecurityPolicyInterface
 
         if (in_array($methodLower, $yiiDenied, true)) {
             return false;
-        }
-
-        // Collection APIs that accept callables — a PHP string is a valid callable.
-        if (
-            $obj !== null &&
-            interface_exists(\Illuminate\Support\Enumerable::class) &&
-            $obj instanceof \Illuminate\Support\Enumerable
-        ) {
-            static $collectionDenied = [
-                'map', 'each', 'filter', 'reject', 'flatmap', 'mapwithkeys', 'mapintoskeys',
-                'transform', 'pipe', 'tap', 'partition', 'reduce', 'reduceright',
-                'sum', 'sortby', 'sortbydesc', 'groupby', 'groupbyassoc',
-                'contains', 'doesntcontain', 'first', 'last', 'sole', 'ensure',
-                'times', 'macro', 'mixin', 'proxy',
-            ];
-
-            if (in_array($methodLower, $collectionDenied, true)) {
-                return false;
-            }
         }
 
         return true;
