@@ -11,6 +11,17 @@ class SettingsController extends Controller
     // Public Methods
     // =========================================================================
 
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        $this->requireAdmin();
+
+        return true;
+    }
+
     public function actionSaveSettings(): ?Response
     {
         $this->requirePostRequest();
@@ -31,8 +42,9 @@ class SettingsController extends Controller
             return null;
         }
 
+        $submittedSettings = $this->request->getParam('settings', []);
         $settings = $plugin->getSettings();
-        $settings->setAttributes($this->request->getParam('settings', []), false);
+        $settings->setAttributes($submittedSettings, false);
 
         if (!$settings->validate()) {
             $this->setFailFlash(Craft::t($pluginHandle, 'Couldn’t save settings.'));
@@ -44,7 +56,9 @@ class SettingsController extends Controller
             return null;
         }
 
-        $pluginSettingsSaved = Craft::$app->getPlugins()->savePluginSettings($plugin, $settings->toArray());
+        // Settings pages can submit one section at a time, so retain stored values omitted from the request.
+        $storedSettings = Craft::$app->getPlugins()->getStoredPluginInfo($pluginHandle)['settings'] ?? [];
+        $pluginSettingsSaved = Craft::$app->getPlugins()->savePluginSettings($plugin, array_replace($storedSettings, $submittedSettings));
 
         if (!$pluginSettingsSaved) {
             $this->setFailFlash(Craft::t($pluginHandle, 'Couldn’t save settings.'));

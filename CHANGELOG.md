@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fix partial plugin settings forms replacing settings omitted from the request, and require administrators to use the shared save action.
+
 ## 3.0.16 - 2026-09-14
 
 ### Changed
