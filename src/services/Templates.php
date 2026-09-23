@@ -646,7 +646,11 @@ REGEX;
     private function _getSandboxedObjectVariables(Environment $twig, string $template, mixed $object, array $variables): array
     {
         if (is_array($object)) {
-            return $variables + $object;
+            $variables += $object;
+            $variables['object'] = $object;
+            $variables['_variables'] = $variables;
+
+            return $variables;
         }
 
         if (!is_object($object)) {

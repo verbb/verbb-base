@@ -182,6 +182,8 @@ try {
         $template = ' Order {number} — {{ totalPrice|number_format(2) }} — {suffix} ';
         same('Order 42 — 1,234.50 — ready', $base->renderSandboxedObjectTemplate($template, new TestData()));
         same('Order 99 — 1,234.50 — ready', $base->renderSandboxedObjectTemplate($template, new TestData(), ['number' => 99]));
+        same('en — en', $base->renderSandboxedObjectTemplate('{site.handle} — {{ site.handle }}', ['site' => ['handle' => 'en']]));
+        same('de — de', $base->renderSandboxedObjectTemplate('{site.handle} — {{ site.handle }}', ['site' => ['handle' => 'en']], ['site' => ['handle' => 'de']]));
         same('<b>:&lt;b&gt;', $base->renderSandboxedObjectTemplate('{number}:{{ number }}', new TestData(), ['number' => '<b>']));
         raises(Twig\Error\SyntaxError::class, fn() => $base->renderSandboxedObjectTemplate("{number} {{ getenv('PATH') }}", new TestData()));
     });

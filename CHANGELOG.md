@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.17 - 2026-09-23
 
 ### Added
 - Add `renderTokens()` for non-Twig token replacement using arrays and Yii `Arrayable` data.
@@ -19,6 +19,8 @@
 ### Fixed
 - Fix a SQL injection vulnerability in sandboxed templates.
 - Fix a Twig sandbox permission bypass.
+- Fix `is defined` checks in sandboxed templates on earlier Craft 5/Twig versions.
+- Resolve `{site.handle}`-style shorthand in sandboxed array-backed object templates.
 - Reject raw SQL arguments to element query `count()` in the legacy sandbox renderer as well.
 - Fix permitted object-template properties throwing sandbox errors when their getters return `null`.
 - Fix partial plugin settings forms replacing settings omitted from the request, and require administrators to use the shared save action.

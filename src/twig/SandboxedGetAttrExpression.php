@@ -19,9 +19,13 @@ class SandboxedGetAttrExpression extends GetAttrExpression
             }
         }
 
-        // Twig 3.21 stores defined-test state on the node, rather than in an attribute.
-        if (method_exists($node, 'isDefinedTestEnabled') ? $node->isDefinedTestEnabled() : ($node->hasAttribute('is_defined_test') && $node->getAttribute('is_defined_test'))) {
-            $this->enableDefinedTest();
+        // Twig 3.21 moved defined-test state from an attribute to a node method.
+        if (method_exists($node, 'isDefinedTestEnabled')) {
+            if ($node->isDefinedTestEnabled()) {
+                $this->enableDefinedTest();
+            }
+        } else if ($node->hasAttribute('is_defined_test') && $node->getAttribute('is_defined_test')) {
+            $this->setAttribute('is_defined_test', true);
         }
     }
 
