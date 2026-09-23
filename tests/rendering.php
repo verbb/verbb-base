@@ -10,6 +10,7 @@ $loader = require $autoload;
 $loader->addPsr4('verbb\\base\\', dirname(__DIR__) . '/src', true);
 $loader->addClassMap([
     verbb\base\services\Templates::class => dirname(__DIR__) . '/src/services/Templates.php',
+    verbb\base\twig\FormattingSecurityPolicy::class => dirname(__DIR__) . '/src/twig/FormattingSecurityPolicy.php',
     verbb\base\twig\SecurityPolicy::class => dirname(__DIR__) . '/src/twig/SecurityPolicy.php',
     verbb\base\twigextensions\Extension::class => dirname(__DIR__) . '/src/twigextensions/Extension.php',
 ]);
