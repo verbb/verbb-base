@@ -2,8 +2,29 @@
 
 ## Unreleased
 
+### Added
+- Add `renderTokens()` for non-Twig token replacement using arrays and Yii `Arrayable` data.
+- Add explicit `renderSandboxedString()`, `renderSandboxedObjectTemplate()` and `renderSandboxedTemplate()` methods using Base's always-on sandbox, with rendering errors passed to callers.
+- Add separate default configuration accessors for the legacy and explicit sandbox APIs.
+- Add reviewed Craft formatting filters and an opt-in helper for current site and user template variables.
+
+### Changed
+- Isolate the explicit sandbox from Craft globals and installed extensions, using explicit method and property permissions instead of broad class allowances.
+- Restrict object-template variable aliases to permitted properties in the explicit sandbox.
+- Allow selected element metadata, custom fields and relation reads in the explicit sandbox, with separate permission required for user profile fields.
+- Add `sandboxedAutoescape` configuration and per-call `autoescape` overrides for the explicit renderer.
+- Restrict collection access in sandboxed templates to permitted methods and existing offsets.
+- Use fixed Craft forms macro dispatch for `proxyField()` and report unsupported field types.
+
 ### Fixed
+- Fix a SQL injection vulnerability in sandboxed templates.
+- Fix a Twig sandbox permission bypass.
+- Reject raw SQL arguments to element query `count()` in the legacy sandbox renderer as well.
+- Fix permitted object-template properties throwing sandbox errors when their getters return `null`.
 - Fix partial plugin settings forms replacing settings omitted from the request, and require administrators to use the shared save action.
+
+### Deprecated
+- Deprecate `renderObjectTemplate()` and `renderString()` in favor of their explicitly sandboxed equivalents. The existing methods retain their configuration behavior and logged, empty-string failures.
 
 ## 3.0.16 - 2026-09-14
 

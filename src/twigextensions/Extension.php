@@ -3,6 +3,8 @@ namespace verbb\base\twigextensions;
 
 use craft\helpers\ArrayHelper;
 
+use InvalidArgumentException;
+
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -21,7 +23,13 @@ class Extension extends AbstractExtension
         return [
             new TwigFunction('vuiGetValue', [$this, 'getValue']),
             new TwigFunction('displayName', [$this, 'displayName']),
+            new TwigFunction('vuiUnsupportedFieldType', [$this, 'unsupportedFieldType']),
         ];
+    }
+
+    public function unsupportedFieldType(string $type): void
+    {
+        throw new InvalidArgumentException(sprintf('Unsupported proxyField type "%s".', $type));
     }
 
     public function getValue(array $array, string $key, mixed $default = null): mixed

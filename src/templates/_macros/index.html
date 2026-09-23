@@ -17,8 +17,122 @@
         {% set config = config | merge({ instructions: instructions }) %}
     {% endif %}
 
-    {# Dynamically calling a macro isn't techncically supported, but this is a way around that! #}
-    {% set tmplString = "{% import '_includes/forms' as forms %}{{ forms.#{type}(config) }}" %}
+    {# Keep field types as data; never compile them into Twig source. #}
+    {% import '_includes/forms' as forms %}
 
-    {{ include(template_from_string(tmplString), { config: config }) }}
+    {% if type == 'button' %}
+        {{ forms.button(config) }}
+    {% elseif type == 'submitButton' %}
+        {{ forms.submitButton(config) }}
+    {% elseif type == 'hidden' %}
+        {{ forms.hidden(config) }}
+    {% elseif type == 'text' %}
+        {{ forms.text(config) }}
+    {% elseif type == 'password' %}
+        {{ forms.password(config) }}
+    {% elseif type == 'copytext' %}
+        {{ forms.copytext(config) }}
+    {% elseif type == 'date' %}
+        {{ forms.date(config) }}
+    {% elseif type == 'time' %}
+        {{ forms.time(config) }}
+    {% elseif type == 'color' %}
+        {{ forms.color(config) }}
+    {% elseif type == 'textarea' %}
+        {{ forms.textarea(config) }}
+    {% elseif type == 'select' %}
+        {{ forms.select(config) }}
+    {% elseif type == 'selectize' %}
+        {{ forms.selectize(config) }}
+    {% elseif type == 'multiselect' %}
+        {{ forms.multiselect(config) }}
+    {% elseif type == 'checkbox' %}
+        {{ forms.checkbox(config) }}
+    {% elseif type == 'checkboxGroup' %}
+        {{ forms.checkboxGroup(config) }}
+    {% elseif type == 'checkboxSelect' %}
+        {{ forms.checkboxSelect(config) }}
+    {% elseif type == 'radio' %}
+        {{ forms.radio(config) }}
+    {% elseif type == 'radioGroup' %}
+        {{ forms.radioGroup(config) }}
+    {% elseif type == 'file' %}
+        {{ forms.file(config) }}
+    {% elseif type == 'lightswitch' %}
+        {{ forms.lightswitch(config) }}
+    {% elseif type == 'editableTable' %}
+        {{ forms.editableTable(config) }}
+    {% elseif type == 'elementSelect' %}
+        {{ forms.elementSelect(config) }}
+    {% elseif type == 'autosuggest' %}
+        {{ forms.autosuggest(config) }}
+    {% elseif type == 'timeZone' %}
+        {{ forms.timeZone(config) }}
+    {% elseif type == 'fs' %}
+        {{ forms.fs(config) }}
+    {% elseif type == 'volume' %}
+        {{ forms.volume(config) }}
+    {% elseif type == 'booleanMenu' %}
+        {{ forms.booleanMenu(config) }}
+    {% elseif type == 'fieldLayoutDesigner' %}
+        {{ forms.fieldLayoutDesigner(config) }}
+    {% elseif type == 'money' %}
+        {{ forms.money(config) }}
+    {% elseif type == 'field' %}
+        {{ forms.field(config) }}
+    {% elseif type == 'textField' %}
+        {{ forms.textField(config) }}
+    {% elseif type == 'copytextField' %}
+        {{ forms.copytextField(config) }}
+    {% elseif type == 'passwordField' %}
+        {{ forms.passwordField(config) }}
+    {% elseif type == 'dateField' %}
+        {{ forms.dateField(config) }}
+    {% elseif type == 'timeField' %}
+        {{ forms.timeField(config) }}
+    {% elseif type == 'colorField' %}
+        {{ forms.colorField(config) }}
+    {% elseif type == 'dateTimeField' %}
+        {{ forms.dateTimeField(config) }}
+    {% elseif type == 'textareaField' %}
+        {{ forms.textareaField(config) }}
+    {% elseif type == 'selectField' %}
+        {{ forms.selectField(config) }}
+    {% elseif type == 'selectizeField' %}
+        {{ forms.selectizeField(config) }}
+    {% elseif type == 'multiselectField' %}
+        {{ forms.multiselectField(config) }}
+    {% elseif type == 'checkboxField' %}
+        {{ forms.checkboxField(config) }}
+    {% elseif type == 'checkboxGroupField' %}
+        {{ forms.checkboxGroupField(config) }}
+    {% elseif type == 'checkboxSelectField' %}
+        {{ forms.checkboxSelectField(config) }}
+    {% elseif type == 'radioGroupField' %}
+        {{ forms.radioGroupField(config) }}
+    {% elseif type == 'fileField' %}
+        {{ forms.fileField(config) }}
+    {% elseif type == 'lightswitchField' %}
+        {{ forms.lightswitchField(config) }}
+    {% elseif type == 'editableTableField' %}
+        {{ forms.editableTableField(config) }}
+    {% elseif type == 'elementSelectField' %}
+        {{ forms.elementSelectField(config) }}
+    {% elseif type == 'autosuggestField' %}
+        {{ forms.autosuggestField(config) }}
+    {% elseif type == 'timeZoneField' %}
+        {{ forms.timeZoneField(config) }}
+    {% elseif type == 'fsField' %}
+        {{ forms.fsField(config) }}
+    {% elseif type == 'volumeField' %}
+        {{ forms.volumeField(config) }}
+    {% elseif type == 'booleanMenuField' %}
+        {{ forms.booleanMenuField(config) }}
+    {% elseif type == 'fieldLayoutDesignerField' %}
+        {{ forms.fieldLayoutDesignerField(config) }}
+    {% elseif type == 'moneyField' %}
+        {{ forms.moneyField(config) }}
+    {% else %}
+        {{ vuiUnsupportedFieldType(type) }}
+    {% endif %}
 {% endmacro %}
