@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.18 - 2026-09-27
 
 ### Fixed
 - Bind shared settings saves to the controller’s plugin instead of a request-provided plugin handle.
