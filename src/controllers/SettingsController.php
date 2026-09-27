@@ -2,9 +2,11 @@
 namespace verbb\base\controllers;
 
 use Craft;
+use craft\base\PluginInterface;
 use craft\web\Controller;
 
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 
 class SettingsController extends Controller
 {
@@ -17,6 +19,7 @@ class SettingsController extends Controller
             return false;
         }
 
+        $this->requireCpRequest();
         $this->requireAdmin();
 
         return true;
@@ -26,24 +29,15 @@ class SettingsController extends Controller
     {
         $this->requirePostRequest();
 
-        $pluginHandle = $this->request->getParam('pluginHandle');
-
-        if (!$pluginHandle) {
-            $this->setFailFlash(Craft::t('app', 'Invalid plugin handle.'));
-
-            return null;
-        }
-
-        $plugin = Craft::$app->getPlugins()->getPlugin($pluginHandle);
-
-        if (!$plugin) {
-            $this->setFailFlash(Craft::t('app', 'Invalid plugin.'));
-
-            return null;
-        }
-
-        $submittedSettings = $this->request->getParam('settings', []);
+        $plugin = $this->_plugin();
+        $pluginHandle = $plugin->getHandle();
+        $submittedSettings = $this->prepareSubmittedSettings($this->request->getBodyParam('settings', []));
         $settings = $plugin->getSettings();
+
+        if ($settings === null) {
+            throw new ServerErrorHttpException('The plugin does not define settings.');
+        }
+
         $settings->setAttributes($submittedSettings, false);
 
         if (!$settings->validate()) {
@@ -73,5 +67,27 @@ class SettingsController extends Controller
         $this->setSuccessFlash(Craft::t($pluginHandle, 'Settings saved.'));
 
         return $this->redirectToPostedUrl();
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function prepareSubmittedSettings(array $settings): array
+    {
+        return $settings;
+    }
+
+
+    // Private Methods
+    // =========================================================================
+
+    private function _plugin(): PluginInterface
+    {
+        if (!$this->module instanceof PluginInterface) {
+            throw new ServerErrorHttpException('Settings controllers must belong to a Craft plugin.');
+        }
+
+        return $this->module;
     }
 }
