@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- Reorganise the control panel assets and Twig extension under the `web` namespace, and replace CodeKit with Vite for asset builds.
+
+### Deprecated
+- Deprecate the legacy `verbb\base\assetbundles\CpAsset` and `verbb\base\twigextensions\Extension` classes in favour of their new `web` namespace equivalents.
+
 ## 3.0.18 - 2026-09-27
 
 ### Fixed
