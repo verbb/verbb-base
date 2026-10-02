@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.19 - 2026-10-02
 
 ### Changed
 - Reorganise the control panel assets and Twig extension under the `web` namespace, and replace CodeKit with Vite for asset builds.
