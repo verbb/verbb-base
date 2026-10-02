@@ -2,7 +2,7 @@
 namespace verbb\base;
 
 use verbb\base\base\Module;
-use verbb\base\twigextensions\Extension;
+use verbb\base\web\twig\Extension;
 
 use Craft;
 
@@ -23,6 +23,6 @@ class Base extends Module
 
     private function _registerTwigExtensions(): void
     {
-        Craft::$app->getView()->registerTwigExtension(new Extension);
+        Craft::$app->getView()->registerTwigExtension(new Extension());
     }
 }

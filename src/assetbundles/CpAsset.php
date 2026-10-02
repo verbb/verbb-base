@@ -1,9 +1,14 @@
 <?php
 namespace verbb\base\assetbundles;
 
-use craft\web\AssetBundle;
-use craft\web\assets\cp\CpAsset as CraftCpAsset;
+use verbb\base\web\assets\cp\CpAsset as NewCpAsset;
 
+use Craft;
+use craft\web\AssetBundle;
+
+/**
+ * @deprecated Use {@see NewCpAsset} instead.
+ */
 class CpAsset extends AssetBundle
 {
     // Public Methods
@@ -11,18 +16,13 @@ class CpAsset extends AssetBundle
 
     public function init(): void
     {
-        $this->sourcePath = '@verbb/base/resources/dist';
+        Craft::$app->getDeprecator()->log(
+            self::class,
+            '`' . self::class . '` has been deprecated. Use `' . NewCpAsset::class . '` instead.',
+        );
 
         $this->depends = [
-            CraftCpAsset::class
-        ];
-
-        $this->css = [
-            'css/verbb-ui.css',
-        ];
-
-        $this->js = [
-            'js/verbb-ui.js'
+            NewCpAsset::class,
         ];
 
         parent::init();

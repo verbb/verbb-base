@@ -5,9 +5,9 @@
 
 // ==========================================================================
 
-if (typeof Verbb === typeof undefined) {
-    Verbb = {};
-}
+window.Verbb = window.Verbb || {};
+
+const Verbb = window.Verbb;
 
 (function($) {
 
@@ -62,7 +62,7 @@ Verbb.UI.SimpleTabs = Garnish.Base.extend({
                 });
 
                 if (href.substr(1) === window.LOCATION_HASH) {
-                    $initialTab = $a;
+                    window.$initialTab = $a;
                 }
             }
 
