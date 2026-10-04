@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fix the shared control-panel layout registering the deprecated asset bundle. ([#3](https://github.com/verbb/verbb-base/issues/3))
+
 ## 3.0.19 - 2026-10-02
 
 ### Changed

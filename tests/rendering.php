@@ -12,7 +12,7 @@ $loader->addClassMap([
     verbb\base\services\Templates::class => dirname(__DIR__) . '/src/services/Templates.php',
     verbb\base\twig\FormattingSecurityPolicy::class => dirname(__DIR__) . '/src/twig/FormattingSecurityPolicy.php',
     verbb\base\twig\SecurityPolicy::class => dirname(__DIR__) . '/src/twig/SecurityPolicy.php',
-    verbb\base\twigextensions\Extension::class => dirname(__DIR__) . '/src/twigextensions/Extension.php',
+    verbb\base\web\twig\Extension::class => dirname(__DIR__) . '/src/web/twig/Extension.php',
 ]);
 require_once dirname($autoload) . '/yiisoft/yii2/Yii.php';
 require_once dirname($autoload) . '/craftcms/cms/src/Craft.php';
@@ -435,7 +435,7 @@ try {
 
     check('proxyField dispatch treats the type as data', function() {
         $twig = new Twig\Environment(new Twig\Loader\ArrayLoader());
-        $twig->addExtension(new verbb\base\twigextensions\Extension());
+        $twig->addExtension(new verbb\base\web\twig\Extension());
         $twig->addFilter(new Twig\TwigFilter('t', fn($text, $category, $variables) => strtr($text, ['{label}' => $variables['label']])));
         $source = file_get_contents(dirname(__DIR__) . '/src/templates/_macros/index.html');
         preg_match_all('/forms\.(\w+)\(config\)/', $source, $matches);
