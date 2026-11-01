@@ -10,8 +10,9 @@ class Locale
 
     public static function switchAppLanguage(string $toLanguage, ?string $formattingLocale = null, callable $callback): void
     {
-        // Store original language and formatting locale
+        // Store original language, locale and formatting locale
         $originalLanguage = Craft::$app->language;
+        $originalLocale = Craft::$app->getLocale();
         $originalFormattingLocale = Craft::$app->formattingLocale;
 
         // Switch to new language
@@ -30,8 +31,9 @@ class Locale
         try {
             $callback();
         } finally {
-            // Revert back to original language and formatting locale
+            // Revert back to original language, locale and formatting locale
             Craft::$app->language = $originalLanguage;
+            Craft::$app->set('locale', $originalLocale);
             Craft::$app->set('formattingLocale', $originalFormattingLocale);
         }
     }
