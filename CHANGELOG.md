@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.21 - 2026-11-01
 
 ### Fixed
 - Fix `Locale::switchAppLanguage()` leaving the app locale switched after running its callback.
