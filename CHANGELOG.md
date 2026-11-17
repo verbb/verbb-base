@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.22 - 2026-11-17
 
 ### Added
 - Add a shared `plugin-kit` translation category for Plugin Kit's built-in strings, such as the data table's “Clear search”, so a site translates them once in `translations/<language>/plugin-kit.php` for every Verbb plugin.
