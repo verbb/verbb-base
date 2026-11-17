@@ -4,7 +4,8 @@
     "scripts": {
         "build": "npm run build:css && npm run build:js",
         "build:css": "vite build --mode css",
-        "build:js": "vite build --mode js"
+        "build:js": "vite build --mode js",
+        "translations:plugin-kit": "node scripts/generate-plugin-kit-translations.mjs"
     },
     "devDependencies": {
         "esbuild": "^0.28.2",
