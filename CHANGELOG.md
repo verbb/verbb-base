@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.0.23 - 2026-11-27
 
 ### Added
 - Add `verbb\base\helpers\EnvironmentSettings`, which checks whether someone who isn’t an admin can save settings that refer to environment variables or change where a connection sends its credentials.
